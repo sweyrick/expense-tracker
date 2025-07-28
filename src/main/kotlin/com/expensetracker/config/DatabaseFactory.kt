@@ -114,7 +114,7 @@ object DatabaseFactory : UserRepository, ExpenseRepository, IncomeRepository {
                 it[Incomes.startDate] = startDate
                 it[Incomes.endDate] = endDate
             }
-            insertStatement[Incomes.id].toString()
+            insertStatement[Incomes.id].value.toString()
         }
     }
 
@@ -124,7 +124,7 @@ object DatabaseFactory : UserRepository, ExpenseRepository, IncomeRepository {
                 .select(Incomes.userId eq UUID.fromString(userId))
                 .map { row ->
                     IncomeResponse(
-                        id = row[Incomes.id].toString(),
+                        id = row[Incomes.id].value.toString(),
                         amount = row[Incomes.amount].toDouble(),
                         description = row[Incomes.description],
                         isRecurring = row[Incomes.isRecurring],
@@ -153,7 +153,7 @@ object DatabaseFactory : UserRepository, ExpenseRepository, IncomeRepository {
             }
             filteredQuery.map { row ->
                 IncomeResponse(
-                    id = row[Incomes.id].toString(),
+                    id = row[Incomes.id].value.toString(),
                     amount = row[Incomes.amount].toDouble(),
                     description = row[Incomes.description],
                     isRecurring = row[Incomes.isRecurring],
@@ -178,7 +178,7 @@ object DatabaseFactory : UserRepository, ExpenseRepository, IncomeRepository {
                 it[Expenses.startDate] = startDate
                 it[Expenses.endDate] = endDate
             }
-            insertStatement[Expenses.id].toString()
+            insertStatement[Expenses.id].value.toString()
         }
     }
 
@@ -188,7 +188,7 @@ object DatabaseFactory : UserRepository, ExpenseRepository, IncomeRepository {
                 .select(Expenses.userId eq UUID.fromString(userId))
                 .map { row ->
                     ExpenseResponse(
-                        id = row[Expenses.id].toString(),
+                        id = row[Expenses.id].value.toString(),
                         amount = row[Expenses.amount].toDouble(),
                         category = ExpenseCategory.valueOf(row[Expenses.category]),
                         description = row[Expenses.description],
@@ -218,7 +218,7 @@ object DatabaseFactory : UserRepository, ExpenseRepository, IncomeRepository {
             }
             filteredQuery.map { row ->
                 ExpenseResponse(
-                    id = row[Expenses.id].toString(),
+                    id = row[Expenses.id].value.toString(),
                     amount = row[Expenses.amount].toDouble(),
                     category = ExpenseCategory.valueOf(row[Expenses.category]),
                     description = row[Expenses.description],
@@ -228,32 +228,6 @@ object DatabaseFactory : UserRepository, ExpenseRepository, IncomeRepository {
                     userId = row[Expenses.userId].toString(),
                     username = row[Users.username]
                 )
-            }
-        }
-    }
-
-    suspend fun initializeTestData() {
-        dbQuery {
-            // Check if test user already exists
-            val existingUser = Users.select { Users.username eq "testuser" }.singleOrNull()
-            val userId = if (existingUser != null) {
-                existingUser[Users.id].toString()
-            } else {
-                // Create test user only if it doesn't exist
-                createUser("testuser", "test@example.com", "hashedpassword")
-            }
-            // Create test incomes (only if they don't exist)
-            val existingIncomes = Incomes.select { Incomes.userId eq UUID.fromString(userId) }.count()
-            if (existingIncomes == 0L) {
-                createIncome(userId, 5000.0, "Salary", true, LocalDate.now())
-                createIncome(userId, 500.0, "Freelance", false, LocalDate.now())
-            }
-            // Create test expenses with correct enum values (only if they don't exist)
-            val existingExpenses = Expenses.select { Expenses.userId eq UUID.fromString(userId) }.count()
-            if (existingExpenses == 0L) {
-                createExpense(userId, 1200.0, "RENT", "Monthly rent payment", true, LocalDate.now())
-                createExpense(userId, 200.0, "GROCERIES", "Groceries", true, LocalDate.now())
-                createExpense(userId, 50.0, "ENTERTAINMENT", "Movie tickets", false, LocalDate.now())
             }
         }
     }
@@ -321,7 +295,7 @@ object DatabaseFactory : UserRepository, ExpenseRepository, IncomeRepository {
             Users.select(Users.username eq username)
                 .map { row ->
                     UserResponse(
-                        id = row[Users.id].toString(),
+                        id = row[Users.id].value.toString(),
                         username = row[Users.username],
                         email = row[Users.email],
                         createdAt = row[Users.createdAt].atOffset(ZoneOffset.UTC)
@@ -336,7 +310,7 @@ object DatabaseFactory : UserRepository, ExpenseRepository, IncomeRepository {
             Users.select(Users.username eq username)
                 .map { row ->
                     Pair(
-                        row[Users.id].toString(),
+                        row[Users.id].value.toString(),
                         row[Users.passwordHash]
                     )
                 }
@@ -349,7 +323,7 @@ object DatabaseFactory : UserRepository, ExpenseRepository, IncomeRepository {
             Users.select(Users.id eq UUID.fromString(id))
                 .map { row ->
                     UserResponse(
-                        id = row[Users.id].toString(),
+                        id = row[Users.id].value.toString(),
                         username = row[Users.username],
                         email = row[Users.email],
                         createdAt = row[Users.createdAt].atOffset(ZoneOffset.UTC)

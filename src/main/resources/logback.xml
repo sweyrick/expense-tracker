@@ -6,8 +6,9 @@
     </appender>
 
     <!-- Suppress Exposed debug/info logs -->
-    <logger name="org.jetbrains.exposed" level="WARN" />
-    <logger name="Exposed" level="WARN" />
+    <logger name="org.jetbrains.exposed" level="DEBUG" />
+    <logger name="Exposed" level="DEBUG" />
+    <logger name="Exposed.SQL" level="DEBUG" />
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />

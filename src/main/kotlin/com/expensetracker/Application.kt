@@ -49,14 +49,6 @@ fun Application.module() {
     
     DatabaseFactory.init(environment.config)
     
-    // Initialize test data if environment variable is set
-    val initializeTestData = environment.config.propertyOrNull("initializeTestData")?.getString() == "true"
-    if (initializeTestData) {
-        kotlinx.coroutines.runBlocking {
-            DatabaseFactory.initializeTestData()
-        }
-    }
-    
     // Create real repository implementations using DatabaseFactory
     val userRepository: UserRepository = DatabaseFactory as UserRepository
     val expenseRepository: ExpenseRepository = DatabaseFactory as ExpenseRepository

@@ -53,7 +53,6 @@ services:
       REGISTRATION_CODE: "WEYRICK2025"
       
       # Application settings
-      INITIALIZE_TEST_DATA: "true"
       LOG_LEVEL: "INFO"
       
       # Database connection pool (optional - using defaults)
